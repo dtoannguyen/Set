@@ -11,9 +11,6 @@ import UIKit
 class ViewController: UIViewController {
 
     var game = Set()
-    var selectedCardIndices = [Int]()
-    var lastSelectedCard: Card?
-    var lastMatchedCard: Card?
     
     @IBOutlet var openCards: [UIButton]!
     
@@ -32,7 +29,7 @@ class ViewController: UIViewController {
         let openCardsOnTheField = openCards.filter {$0.isHidden == false}
         for index in openCardsOnTheField.indices {
             var attributes = [NSAttributedStringKey:Any]()
-            let button = openCards[index]
+            let button = openCardsOnTheField[index]
             let card = game.cardsOnTheField[index]
             button.layer.cornerRadius = 8.0
             attributes[NSAttributedStringKey.strokeColor] = card.color
@@ -52,64 +49,83 @@ class ViewController: UIViewController {
     }
     
     @IBAction func selectCard(_ sender: UIButton) {
-        if selectedCardIndices.count == 3 {
-            selectedCardIndices.removeAll()
-        }
-        let openCardsOnTheField = openCards.filter {$0.isHidden == false}
-        guard let cardNumber = openCardsOnTheField.index(of: sender) else { print("openCards.index(of: sender) not available"); return }
+        guard let cardNumber = openCards.index(of: sender) else { print("openCards.index(of: sender) not available"); return }
+        let selection = game.cardsOnTheField[cardNumber]
         game.selectCard(at: cardNumber)
-        if game.cardsOnTheField[cardNumber].isSelected == false {
-            guard let indexOfCardNumber = selectedCardIndices.index(of: cardNumber) else {print("cardNumber not found in selectedCardIndices"); return}
-            lastSelectedCard = nil
-            print("lastSelectedCard set to nil")
-            selectedCardIndices.remove(at: indexOfCardNumber)
-            print(selectedCardIndices)
-            openCardsOnTheField[cardNumber].layer.borderWidth = 0
-//            openCards[cardNumber].layer.borderWidth = 0
-        }
-//        print(game.cardsOnTheField[cardNumber])
-        if game.cardsOnTheField[cardNumber].isSelected {
-            lastSelectedCard = game.cardsOnTheField[cardNumber]
-            print(lastSelectedCard!)
-            selectedCardIndices.append(cardNumber)
-            print(selectedCardIndices)
-            openCardsOnTheField[cardNumber].layer.borderWidth = 5
-            openCardsOnTheField[cardNumber].layer.borderColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1).cgColor
-            if selectedCardIndices.count == 3 {
-                if let lastCardMatched = lastMatchedCard {
-                    if game.matchedCards.contains(lastCardMatched) {
-                        print("lastSelectedCard is contained in matched Cards")
-                        if game.deck.isEmpty {
-                            //                        for index in selectedCardIndices {
-                            //                            openCards[index].backgroundColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 0)
-                            //                            openCards.remove(at: index)
-                            //                            openCards[index].isHidden = true
-                            //                        }
-                            for index in 0...2 {
-                                openCardsOnTheField[index].isHidden = true
-                            }
-                        }
-                    } else {
-                        print("lastSelectedCard is not contained in matched Cards")
+        makeSelectionVisible(at: cardNumber, selectedCard: selection)
+        print("Last selected card: \n\(selection)")
+        if game.selectedCards.count == 3 {
+            game.checkIfCardsAreSets()
+            for index in game.indicesOfSelectedCards {
+                openCards[index].layer.borderWidth = 0
+            }
+            if game.matchedCards.contains(selection) {
+                print("VC recognized match")
+                if game.deck.isEmpty {
+                    for index in game.indicesOfSelectedCards {
+                        openCards[index].isHidden = true
                     }
                 }
+            } else {
+                print("VC does NOT recognized match")
             }
-            game.checkIfCardsAreSets()
-            if game.matchedCards.contains(lastSelectedCard!) {
-                lastMatchedCard = lastSelectedCard!
-            }
-            if game.cardsOnTheField.filter({ $0.isSelected }).isEmpty {
-//                print("No Cards selected")
-                for index in selectedCardIndices {
-                    openCards[index].layer.borderWidth = 0
-                }
-                assignCardToButton()
-            }
+            game.replaceRemovedCardsOnTheField()
+            game.resetSelectedCards()
+            assignCardToButton()
         }
     }
     
+    func makeSelectionVisible(at selectedIndex: Int, selectedCard: Card) {
+        if !game.selectedCards.contains(selectedCard) {
+            openCards[selectedIndex].layer.borderWidth = 0
+        } else {
+            openCards[selectedIndex].layer.borderWidth = 5
+            openCards[selectedIndex].layer.borderColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1).cgColor
+        }
+    }
+    
+//
+//            lastSelectedCard = game.cardsOnTheField[cardNumber]
+//            print(lastSelectedCard!)
+//            selectedCardIndices.append(cardNumber)
+//            print(selectedCardIndices)
+//            openCardsOnTheField[cardNumber].layer.borderWidth = 5
+//            openCardsOnTheField[cardNumber].layer.borderColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1).cgColor
+//            if selectedCardIndices.count == 3 {
+//                if let lastCardMatched = lastMatchedCard {
+//                    if game.matchedCards.contains(lastCardMatched) {
+//                        print("lastSelectedCard is contained in matched Cards")
+//                        if game.deck.isEmpty {
+//                            //                        for index in selectedCardIndices {
+//                            //                            openCards[index].backgroundColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 0)
+//                            //                            openCards.remove(at: index)
+//                            //                            openCards[index].isHidden = true
+//                            //                        }
+//                            for index in 0...2 {
+//                                openCardsOnTheField[index].isHidden = true
+//                            }
+//                        }
+//                    } else {
+//                        print("lastSelectedCard is not contained in matched Cards")
+//                    }
+//                }
+//            }
+//            game.checkIfCardsAreSets()
+//            if game.matchedCards.contains(lastSelectedCard!) {
+//                lastMatchedCard = lastSelectedCard!
+//            }
+//            if game.cardsOnTheField.filter({ $0.isSelected }).isEmpty {
+////                print("No Cards selected")
+//                for index in selectedCardIndices {
+//                    openCards[index].layer.borderWidth = 0
+//                }
+//                assignCardToButton()
+//            }
+//        }
+//    }
+
     @IBAction func dealThreeMoreCardsButtonPressed(_ sender: Any) {
-        if game.cardsOnTheField.count < 24 {
+        if game.cardsOnTheField.count < 24 && !game.deck.isEmpty {
             let indicesOfHiddenCardsOnTheField = openCards.indices.filter() {openCards[$0].isHidden == true}
             for index in 0...2 {
                 openCards[indicesOfHiddenCardsOnTheField[index]].isHidden = false

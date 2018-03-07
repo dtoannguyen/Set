@@ -16,8 +16,6 @@ struct Card: CustomStringConvertible, Equatable {
 
     var description: String { return numberUI()}
     
-    var isSelected = false
-    var isMatched = false
     let number: Int
     let symbol: String
     let shading: String
