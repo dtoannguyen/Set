@@ -14,28 +14,54 @@ struct Card: CustomStringConvertible, Equatable {
         return lhs.color == rhs.color && lhs.number == rhs.number && lhs.symbol == rhs.symbol && lhs.shading == rhs.shading
     }
 
-    var description: String { return numberUI()}
-    
-    let number: Int
-    let symbol: String
-    let shading: String
-    let color: UIColor
-    
-    static var numbers = [1, 2, 3]
-    static var symbols = ["■","●","▲"]
-    static var shades = ["solid", "striped", "open"]
-    static var colors = [UIColor.red, .green, .purple]
-
-    func numberUI() -> String {
+    var description: String {
         var symbols: String?
-        if number == 1 {
-            symbols = "\(symbol)"
-        } else if number == 2 {
-            symbols = "\(symbol)\n\(symbol)"
-        } else if number == 3 {
-            symbols = "\(symbol)\n\(symbol)\n\(symbol)"
+        switch number {
+        case .one:
+            symbols = "\(symbol.rawValue)"
+        case .two:
+            symbols = "\(symbol.rawValue) \(symbol.rawValue)"
+        case .three:
+            symbols = "\(symbol.rawValue) \(symbol.rawValue) \(symbol.rawValue)"
         }
         return symbols!
+    }
+    
+    let number: Numbers
+    let symbol: Symbols
+    let shading: Shades
+    let color: Colors
+    
+    enum Numbers {
+        case one
+        case two
+        case three
+        
+        static var all = [Numbers.one, .two, .three]
+    }
+    
+    enum Symbols: String {
+        case square = "■"
+        case circle = "●"
+        case triangle = "▲"
+        
+        static var all = [Symbols.square, .circle, .triangle]
+    }
+    
+    enum Shades {
+        case solid
+        case striped
+        case open
+        
+        static var all = [Shades.solid, .striped, .open]
+    }
+    
+    enum Colors {
+        case red
+        case green
+        case purple
+
+        static var all = [Colors.red, .green, .purple]
     }
     
 }

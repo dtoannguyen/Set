@@ -10,35 +10,60 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    var game = Set()
+    private var game = Set()
     
-    @IBOutlet var openCards: [UIButton]!
+    @IBOutlet private weak var cardsInDeckLabel: UILabel!
+    @IBOutlet private weak var scoreLabel: UILabel!
+    
+    @IBOutlet private weak var hintButton: UIButton!
+    @IBOutlet private weak var dealMoreCardsButton: UIButton!
+    @IBOutlet private var openCards: [UIButton]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        dealMoreCardsButton.layer.cornerRadius = 8.0
+        hintButton.layer.cornerRadius = 8.0
+        gameSetup()
+    }
+    
+    private func gameSetup() {
         game.drawCardsFromDeck(amountOfCards: 12)
+        updateLabels()
         for buttonIndex in openCards.indices {
-            if buttonIndex > 11 {
+            openCards[buttonIndex].backgroundColor = #colorLiteral(red: 0.9764705882, green: 0.9725490196, blue: 0.9215686275, alpha: 1)
+            if buttonIndex < 12 {
+                openCards[buttonIndex].isHidden = false
+                openCards[buttonIndex].layer.borderWidth = 0.0
+            } else {
                 openCards[buttonIndex].isHidden = true
             }
         }
         assignCardToButton()
     }
     
-    func assignCardToButton() {
-        let openCardsOnTheField = openCards.filter {$0.isHidden == false}
+    private func assignCardToButton() {
+        let openCardsOnTheField = openCards.filter {$0.isHidden == false && $0.backgroundColor != #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)}
         for index in openCardsOnTheField.indices {
             var attributes = [NSAttributedStringKey:Any]()
             let button = openCardsOnTheField[index]
             let card = game.cardsOnTheField[index]
             button.layer.cornerRadius = 8.0
-            attributes[NSAttributedStringKey.strokeColor] = card.color
-            if card.shading == "solid" {
-                attributes[NSAttributedStringKey.foregroundColor] = card.color
-            } else if card.shading == "striped" {
-                attributes[NSAttributedStringKey.foregroundColor] = card.color.withAlphaComponent(0.4)
+            switch card.color {
+            case .green:
+                attributes[NSAttributedStringKey.strokeColor] = UIColor.green
+            case .purple:
+                attributes[NSAttributedStringKey.strokeColor] = UIColor.purple
+            case .red:
+                attributes[NSAttributedStringKey.strokeColor] = UIColor.red
+            }
+            let cardColor: UIColor = attributes[NSAttributedStringKey.strokeColor] as! UIColor
+            switch card.shading {
+            case .solid:
+                attributes[NSAttributedStringKey.foregroundColor] = cardColor
+            case .striped:
+                attributes[NSAttributedStringKey.foregroundColor] = cardColor.withAlphaComponent(0.4)
                 attributes[NSAttributedStringKey.strokeWidth] = -4.0
-            } else if card.shading == "open" {
+            case .open:
                 attributes[NSAttributedStringKey.strokeWidth] = 4.0
             }
             let attributedText = NSAttributedString(string: card.description, attributes: attributes)
@@ -48,22 +73,25 @@ class ViewController: UIViewController {
         }
     }
     
-    @IBAction func selectCard(_ sender: UIButton) {
-        guard let cardNumber = openCards.index(of: sender) else { print("openCards.index(of: sender) not available"); return }
+    @IBAction private func selectCard(_ sender: UIButton) {
+        let openCardsOnTheField = openCards.filter {$0.isHidden == false && $0.backgroundColor != #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)}
+        guard let cardNumber = openCardsOnTheField.index(of: sender) else { print("sender not available"); return }
         let selection = game.cardsOnTheField[cardNumber]
         game.selectCard(at: cardNumber)
-        makeSelectionVisible(at: cardNumber, selectedCard: selection)
+        makeSelectionVisible(filteredArray: openCardsOnTheField, at: cardNumber, selectedCard: selection)
         print("Last selected card: \n\(selection)")
         if game.selectedCards.count == 3 {
             game.checkIfCardsAreSets()
             for index in game.indicesOfSelectedCards {
-                openCards[index].layer.borderWidth = 0
+                openCardsOnTheField[index].layer.borderWidth = 0
             }
             if game.matchedCards.contains(selection) {
                 print("VC recognized match")
                 if game.deck.isEmpty {
                     for index in game.indicesOfSelectedCards {
-                        openCards[index].isHidden = true
+                        openCardsOnTheField[index].backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+                        openCardsOnTheField[index].setAttributedTitle(nil, for: .normal)
+//                        openCardsOnTheField[index].isHidden = true
                     }
                 }
             } else {
@@ -72,59 +100,20 @@ class ViewController: UIViewController {
             game.replaceRemovedCardsOnTheField()
             game.resetSelectedCards()
             assignCardToButton()
+            updateLabels()
         }
     }
     
-    func makeSelectionVisible(at selectedIndex: Int, selectedCard: Card) {
+    private func makeSelectionVisible(filteredArray: [UIButton],at selectedIndex: Int, selectedCard: Card) {
         if !game.selectedCards.contains(selectedCard) {
-            openCards[selectedIndex].layer.borderWidth = 0
+            filteredArray[selectedIndex].layer.borderWidth = 0
         } else {
-            openCards[selectedIndex].layer.borderWidth = 5
-            openCards[selectedIndex].layer.borderColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1).cgColor
+            filteredArray[selectedIndex].layer.borderWidth = 3.5
+            filteredArray[selectedIndex].layer.borderColor = #colorLiteral(red: 0.9607843137, green: 0.5176470588, blue: 0.1019607843, alpha: 1).cgColor
         }
     }
-    
-//
-//            lastSelectedCard = game.cardsOnTheField[cardNumber]
-//            print(lastSelectedCard!)
-//            selectedCardIndices.append(cardNumber)
-//            print(selectedCardIndices)
-//            openCardsOnTheField[cardNumber].layer.borderWidth = 5
-//            openCardsOnTheField[cardNumber].layer.borderColor = #colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1).cgColor
-//            if selectedCardIndices.count == 3 {
-//                if let lastCardMatched = lastMatchedCard {
-//                    if game.matchedCards.contains(lastCardMatched) {
-//                        print("lastSelectedCard is contained in matched Cards")
-//                        if game.deck.isEmpty {
-//                            //                        for index in selectedCardIndices {
-//                            //                            openCards[index].backgroundColor = #colorLiteral(red: 0.9999960065, green: 1, blue: 1, alpha: 0)
-//                            //                            openCards.remove(at: index)
-//                            //                            openCards[index].isHidden = true
-//                            //                        }
-//                            for index in 0...2 {
-//                                openCardsOnTheField[index].isHidden = true
-//                            }
-//                        }
-//                    } else {
-//                        print("lastSelectedCard is not contained in matched Cards")
-//                    }
-//                }
-//            }
-//            game.checkIfCardsAreSets()
-//            if game.matchedCards.contains(lastSelectedCard!) {
-//                lastMatchedCard = lastSelectedCard!
-//            }
-//            if game.cardsOnTheField.filter({ $0.isSelected }).isEmpty {
-////                print("No Cards selected")
-//                for index in selectedCardIndices {
-//                    openCards[index].layer.borderWidth = 0
-//                }
-//                assignCardToButton()
-//            }
-//        }
-//    }
 
-    @IBAction func dealThreeMoreCardsButtonPressed(_ sender: Any) {
+    @IBAction private func dealThreeMoreCardsButtonPressed(_ sender: Any) {
         if game.cardsOnTheField.count < 24 && !game.deck.isEmpty {
             let indicesOfHiddenCardsOnTheField = openCards.indices.filter() {openCards[$0].isHidden == true}
             for index in 0...2 {
@@ -132,9 +121,20 @@ class ViewController: UIViewController {
             }
             game.drawCardsFromDeck(amountOfCards: 3)
             assignCardToButton()
+            updateLabels()
         }
     }
+    
+    @IBAction func newGameButtonPressed(_ sender: UIButton) {
+        game = Set()
+        gameSetup()
+    }
+    
 
+    private func updateLabels() {
+        cardsInDeckLabel.text = "Deck: \(game.deck.count)"
+        scoreLabel.text = "Score: \(game.score)"
+    }
 }
 
 extension Int {

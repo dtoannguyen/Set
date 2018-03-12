@@ -10,20 +10,27 @@ import UIKit
 
 struct Set {
     
-    var deck = [Card]()
-    var cardsOnTheField = [Card]()
-    var matchedCards = [Card]()
-    var selectedCards = [Card]()
-    var indicesOfSelectedCards = [Int]()
+    private(set) var deck = [Card]()
+    private(set) var cardsOnTheField = [Card]()
+    private(set) var matchedCards = [Card]()
+    private(set) var selectedCards = [Card]()
+    private(set) var indicesOfSelectedCards = [Int]()
     private(set) var score = 0
     private(set) var matches = 0
     
+    private var cardsAreSets: (Card, Card, Card) -> Bool = {
+        return ((($0.color == $1.color && $0.color == $2.color) || ($0.color != $1.color && $0.color != $2.color && $1.color != $2.color)) &&
+            (($0.number == $1.number && $0.number == $2.number) || ($0.number != $1.number && $0.number != $2.number && $1.number != $2.number)) &&
+            (($0.symbol == $1.symbol && $0.symbol == $2.symbol) || ($0.symbol != $1.symbol && $0.symbol != $2.symbol && $1.symbol != $2.symbol)) &&
+            (($0.shading == $1.shading && $0.shading == $2.shading) || ($0.shading != $1.shading && $0.shading != $2.shading && $1.shading != $2.shading)))
+    }
+    
     // TODO: - Append Cards to Deck
     init() {
-        for color in Card.colors {
-            for symbol in Card.symbols {
-                for number in Card.numbers {
-                    for shade in Card.shades {
+        for color in Card.Colors.all {
+            for symbol in Card.Symbols.all {
+                for number in Card.Numbers.all {
+                    for shade in Card.Shades.all {
                         let card = Card(number: number, symbol: symbol, shading: shade, color: color)
                         deck.append(card)
                     }
@@ -60,33 +67,39 @@ struct Set {
             print("There are not enough cards selected")
         }
         if selectedCards.count == 3 {
-//            if (selectedCards[0].color == selectedCards[1].color && selectedCards[0].color == selectedCards[2].color && selectedCards[1].color == selectedCards[2].color) || (selectedCards[0].color != selectedCards[1].color && selectedCards[0].color != selectedCards[2].color && selectedCards[1].color != selectedCards[2].color) {
+            if cardsAreSets(selectedCards[0], selectedCards[1], selectedCards[2]) {
                 print("It's a match!")
-                matches += 1
+                score += 3
                 for card in selectedCards {
                     matchedCards.append(card)
                 }
-            if matchedCards.count == 81 {
-                print("All cards have been appended to matchedCards")
+                if matchedCards.count == 81 {
+                    print("All cards have been appended to matchedCards")
+                }
+            } else {
+                print("Cards do not match!")
+                score -= 5
             }
-//            } else {
-//                print("Cards do not match!")
-//            }
         }
     }
 
     // TODO: - Replace Removed Cards
     mutating func replaceRemovedCardsOnTheField() {
-        if !deck.isEmpty && matchedCards.contains(selectedCards[1]) { // Any card of that array would be fine
+        if matchedCards.contains(selectedCards[1]) { // Any card of that array would be fine
             print("selectedCard is contained in matchedCards")
-            for index in indicesOfSelectedCards {
-                cardsOnTheField.remove(at: index)
-                let randomCard = deck.remove(at: deck.count.arc4random)
-                cardsOnTheField.insert(randomCard, at: index)
+            let sortedIndicesOfSelectedCards = indicesOfSelectedCards.sorted()
+            for index in 0...2 {
+                if !deck.isEmpty {
+                    cardsOnTheField.remove(at: sortedIndicesOfSelectedCards[index])
+                    let randomCard = deck.remove(at: deck.count.arc4random)
+                    cardsOnTheField.insert(randomCard, at: sortedIndicesOfSelectedCards[index])
+                } else {
+                    cardsOnTheField.remove(at: sortedIndicesOfSelectedCards[index] - index)
+                }
             }
-            print(deck.count)
+//            print(deck.count)
         } else {
-            print("Deck is either empty or selectedCard is not contained in matchedCards")
+            print("selectedCard is not contained in matchedCards")
         }
     }
     
@@ -95,7 +108,5 @@ struct Set {
         selectedCards.removeAll()
         indicesOfSelectedCards.removeAll()
     }
-    
-    // TODO: - Restart game
     
 }
