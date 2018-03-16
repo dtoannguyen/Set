@@ -25,7 +25,7 @@ struct Set {
             (($0.shading == $1.shading && $0.shading == $2.shading) || ($0.shading != $1.shading && $0.shading != $2.shading && $1.shading != $2.shading)))
     }
     
-    // TODO: - Append Cards to Deck
+    // MARK: - Append Cards to Deck
     init() {
         for color in Card.Colors.all {
             for symbol in Card.Symbols.all {
@@ -46,7 +46,7 @@ struct Set {
         }
     }
     
-    // TODO: - Select Card
+    // MARK: - Select Card
     mutating func selectCard(at index: Int) {
         if selectedCards.contains(cardsOnTheField[index]) {
             print("selectedCards contains \(cardsOnTheField[index])")
@@ -61,7 +61,7 @@ struct Set {
         print(indicesOfSelectedCards)
     }
     
-    // TODO: - Check if selected cards form a set or not
+    // MARK: - Check if selected cards form a set or not
     mutating func checkIfCardsAreSets() {
         if selectedCards.count < 3 {
             print("There are not enough cards selected")
@@ -83,7 +83,7 @@ struct Set {
         }
     }
 
-    // TODO: - Replace Removed Cards
+    // MARK: - Replace Removed Cards
     mutating func replaceRemovedCardsOnTheField() {
         if matchedCards.contains(selectedCards[1]) { // Any card of that array would be fine
             print("selectedCard is contained in matchedCards")
@@ -103,10 +103,50 @@ struct Set {
         }
     }
     
-    // TODO: - Reset selectedCards and indicesOfSelecteCards
+    // MARK: - Reset selectedCards and indicesOfSelecteCards
     mutating func resetSelectedCards() {
         selectedCards.removeAll()
         indicesOfSelectedCards.removeAll()
+    }
+    
+    // MARK: - Hint / Solution
+    mutating func hint() {
+        resetSelectedCards()
+        outterLoop: for index in cardsOnTheField.indices {
+            if index < cardsOnTheField.count - 2 {
+                selectedCards.append(cardsOnTheField[index])
+                indicesOfSelectedCards.append(index)
+//                print("first Card appended to array")
+                for secondIndex in (index+1)...(cardsOnTheField.count-1) {
+                    selectedCards.append(cardsOnTheField[secondIndex])
+                    indicesOfSelectedCards.append(secondIndex)
+                    let first = selectedCards[0]
+                    let second = selectedCards[1]
+                    let number = first.number == second.number ? first.number : Card.Numbers.all.filter({$0 != first.number && $0 != second.number})[0]
+                    let symbol = first.symbol == second.symbol ? first.symbol : Card.Symbols.all.filter({$0 != first.symbol && $0 != second.symbol})[0]
+                    let shade = first.shading == second.shading ? first.shading : Card.Shades.all.filter({$0 != first.shading && $0 != second.shading})[0]
+                    let color = first.color == second.color ? first.color : Card.Colors.all.filter({$0 != first.color && $0 != second.color})[0]
+                    let matchingCard = Card(number: number, symbol: symbol, shading: shade, color: color)
+                    if cardsOnTheField.contains(matchingCard) {
+                        selectedCards.append(matchingCard)
+                        let indexOfMatchingCard = cardsOnTheField.index(of: matchingCard)
+                        indicesOfSelectedCards.append(indexOfMatchingCard!)
+                        print("There is a set on the field")
+                        print("Breaking")
+                        break outterLoop
+                    } else {
+                        selectedCards.remove(at: 1)
+                        indicesOfSelectedCards.remove(at: 1)
+                        print("No matching cards for card with index \(index)/\(secondIndex)could be found")
+                    }
+                }
+                selectedCards.remove(at: 0)
+                indicesOfSelectedCards.remove(at: 0)
+            } else {
+                print("Currently there are no cards on the field that makes up a set")
+                resetSelectedCards()
+            }
+        }
     }
     
 }

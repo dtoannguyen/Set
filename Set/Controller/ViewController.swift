@@ -135,6 +135,21 @@ class ViewController: UIViewController {
         cardsInDeckLabel.text = "Deck: \(game.deck.count)"
         scoreLabel.text = "Score: \(game.score)"
     }
+    
+    @IBAction private func hintButtonPressed(_ sender: UIButton) {
+        game.hint()
+        if !game.selectedCards.isEmpty {
+            let openCardsOnTheField = openCards.filter {$0.isHidden == false && $0.backgroundColor != #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)}
+            for index in game.selectedCards.indices {
+                openCardsOnTheField[game.indicesOfSelectedCards[index]].layer.borderWidth = 3.5
+                openCardsOnTheField[game.indicesOfSelectedCards[index]].layer.borderColor = #colorLiteral(red: 0.5807225108, green: 0.066734083, blue: 0, alpha: 1).cgColor
+//                makeSelectionVisible(filteredArray: openCardsOnTheField, at: game.indicesOfSelectedCards[index], selectedCard: game.selectedCards[index])
+            }
+            game.resetSelectedCards()
+        }
+    }
+    
+    
 }
 
 extension Int {
