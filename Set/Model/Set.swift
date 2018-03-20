@@ -112,15 +112,22 @@ struct Set {
     // MARK: - Hint / Solution
     mutating func hint() {
         resetSelectedCards()
-        var startIndex = cardsOnTheField.count.arc4random
-        while startIndex > (cardsOnTheField.count - 3) {
-            startIndex = cardsOnTheField.count.arc4random
-        }
+        var arrayToRemoveFrom = cardsOnTheField.map({cardsOnTheField.index(of: $0)!})
+        arrayToRemoveFrom.removeLast(2)
         outterLoop: for index in 1...(cardsOnTheField.count - 2) {
-            let card = cardsOnTheField[startIndex]
+            let randomIndex = arrayToRemoveFrom[arrayToRemoveFrom.count.arc4random]
+            let card = cardsOnTheField[randomIndex]
             selectedCards.append(card)
-            indicesOfSelectedCards.append(startIndex)
-            for secondIndex in (startIndex + 1)...(cardsOnTheField.count - 1) {
+            indicesOfSelectedCards.append(randomIndex)
+            let indexInArrayToRemoveFrom = arrayToRemoveFrom.index(of: randomIndex)
+            print(arrayToRemoveFrom)
+            if let arrayToRemoveFromIndex = indexInArrayToRemoveFrom {
+                arrayToRemoveFrom.remove(at: arrayToRemoveFromIndex)
+                print("New Array: \(arrayToRemoveFrom)")
+            } else {
+                print("indexInArrayToRemoveFrom = nil")
+            }
+            for secondIndex in (randomIndex + 1)...(cardsOnTheField.count - 1) {
                 selectedCards.append(cardsOnTheField[secondIndex])
                 indicesOfSelectedCards.append(secondIndex)
                 let first = selectedCards[0]
@@ -143,13 +150,9 @@ struct Set {
                     if index == (cardsOnTheField.count - 2) && secondIndex == (cardsOnTheField.count - 1) {
                         print("Currently there are no cards on the field that makes up a set")
                     } else {
-                        print("No matching cards for card with index \(startIndex)/\(secondIndex)could be found")
+                        print("No matching cards for card with index \(randomIndex)/\(secondIndex)could be found")
                     }
                 }
-            }
-            startIndex += 1
-            if startIndex == cardsOnTheField.count - 2 {
-                startIndex = 0
             }
             selectedCards.remove(at: 0)
             indicesOfSelectedCards.remove(at: 0)
