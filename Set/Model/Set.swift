@@ -112,40 +112,47 @@ struct Set {
     // MARK: - Hint / Solution
     mutating func hint() {
         resetSelectedCards()
-        outterLoop: for index in cardsOnTheField.indices {
-            if index < cardsOnTheField.count - 2 {
-                selectedCards.append(cardsOnTheField[index])
-                indicesOfSelectedCards.append(index)
-//                print("first Card appended to array")
-                for secondIndex in (index+1)...(cardsOnTheField.count-1) {
-                    selectedCards.append(cardsOnTheField[secondIndex])
-                    indicesOfSelectedCards.append(secondIndex)
-                    let first = selectedCards[0]
-                    let second = selectedCards[1]
-                    let number = first.number == second.number ? first.number : Card.Numbers.all.filter({$0 != first.number && $0 != second.number})[0]
-                    let symbol = first.symbol == second.symbol ? first.symbol : Card.Symbols.all.filter({$0 != first.symbol && $0 != second.symbol})[0]
-                    let shade = first.shading == second.shading ? first.shading : Card.Shades.all.filter({$0 != first.shading && $0 != second.shading})[0]
-                    let color = first.color == second.color ? first.color : Card.Colors.all.filter({$0 != first.color && $0 != second.color})[0]
-                    let matchingCard = Card(number: number, symbol: symbol, shading: shade, color: color)
-                    if cardsOnTheField.contains(matchingCard) {
-                        selectedCards.append(matchingCard)
-                        let indexOfMatchingCard = cardsOnTheField.index(of: matchingCard)
-                        indicesOfSelectedCards.append(indexOfMatchingCard!)
-                        print("There is a set on the field")
-                        print("Breaking")
-                        break outterLoop
+        var startIndex = cardsOnTheField.count.arc4random
+        while startIndex > (cardsOnTheField.count - 3) {
+            startIndex = cardsOnTheField.count.arc4random
+        }
+        outterLoop: for index in 1...(cardsOnTheField.count - 2) {
+            let card = cardsOnTheField[startIndex]
+            selectedCards.append(card)
+            indicesOfSelectedCards.append(startIndex)
+            for secondIndex in (startIndex + 1)...(cardsOnTheField.count - 1) {
+                selectedCards.append(cardsOnTheField[secondIndex])
+                indicesOfSelectedCards.append(secondIndex)
+                let first = selectedCards[0]
+                let second = selectedCards[1]
+                let number = first.number == second.number ? first.number : Card.Numbers.all.filter({$0 != first.number && $0 != second.number})[0]
+                let symbol = first.symbol == second.symbol ? first.symbol : Card.Symbols.all.filter({$0 != first.symbol && $0 != second.symbol})[0]
+                let shade = first.shading == second.shading ? first.shading : Card.Shades.all.filter({$0 != first.shading && $0 != second.shading})[0]
+                let color = first.color == second.color ? first.color : Card.Colors.all.filter({$0 != first.color && $0 != second.color})[0]
+                let matchingCard = Card(number: number, symbol: symbol, shading: shade, color: color)
+                if cardsOnTheField.contains(matchingCard) {
+                    selectedCards.append(matchingCard)
+                    let indexOfMatchingCard = cardsOnTheField.index(of: matchingCard)
+                    indicesOfSelectedCards.append(indexOfMatchingCard!)
+                    print("There is a set on the field")
+                    print("Breaking")
+                    break outterLoop
+                } else {
+                    selectedCards.remove(at: 1)
+                    indicesOfSelectedCards.remove(at: 1)
+                    if index == (cardsOnTheField.count - 2) && secondIndex == (cardsOnTheField.count - 1) {
+                        print("Currently there are no cards on the field that makes up a set")
                     } else {
-                        selectedCards.remove(at: 1)
-                        indicesOfSelectedCards.remove(at: 1)
-                        print("No matching cards for card with index \(index)/\(secondIndex)could be found")
+                        print("No matching cards for card with index \(startIndex)/\(secondIndex)could be found")
                     }
                 }
-                selectedCards.remove(at: 0)
-                indicesOfSelectedCards.remove(at: 0)
-            } else {
-                print("Currently there are no cards on the field that makes up a set")
-                resetSelectedCards()
             }
+            startIndex += 1
+            if startIndex == cardsOnTheField.count - 2 {
+                startIndex = 0
+            }
+            selectedCards.remove(at: 0)
+            indicesOfSelectedCards.remove(at: 0)
         }
     }
     
