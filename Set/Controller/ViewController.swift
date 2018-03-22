@@ -11,11 +11,13 @@ import UIKit
 class ViewController: UIViewController {
 
     private var game = Set()
+    private var playerSelectedThreeCards = false
     
     @IBOutlet private weak var cardsInDeckLabel: UILabel!
     @IBOutlet private weak var scoreLabel: UILabel!
     
     @IBOutlet private weak var hintButton: UIButton!
+    @IBOutlet weak var playAgainstComputerButton: UIButton!
     @IBOutlet private weak var dealMoreCardsButton: UIButton!
     @IBOutlet private var openCards: [UIButton]!
     
@@ -23,6 +25,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         dealMoreCardsButton.layer.cornerRadius = 8.0
         hintButton.layer.cornerRadius = 8.0
+        playAgainstComputerButton.layer.cornerRadius = 8.0
         gameSetup()
     }
     
@@ -86,12 +89,12 @@ class ViewController: UIViewController {
                 openCardsOnTheField[index].layer.borderWidth = 0
             }
             if game.matchedCards.contains(selection) {
+                playerSelectedThreeCards = true
                 print("VC recognized match")
                 if game.deck.isEmpty {
                     for index in game.indicesOfSelectedCards {
                         openCardsOnTheField[index].backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
                         openCardsOnTheField[index].setAttributedTitle(nil, for: .normal)
-//                        openCardsOnTheField[index].isHidden = true
                     }
                 }
             } else {
@@ -148,6 +151,53 @@ class ViewController: UIViewController {
                 openCardsOnTheField[game.indicesOfSelectedCards[index]].layer.borderColor = #colorLiteral(red: 0.5807225108, green: 0.066734083, blue: 0, alpha: 1).cgColor
             }
             game.resetSelectedCards()
+        }
+    }
+    
+    @IBAction func playAgainstComputerButtonPressed(_ sender: UIButton) {
+        game.computerModusIsOn = game.computerModusIsOn == true ? false : true
+        print("computerModusIsOn: \(game.computerModusIsOn)")
+        let randomTime = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+        var seconds = randomTime[randomTime.count.arc4random]
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
+            if self.game.computerModusIsOn {
+                seconds -= 1
+                print(seconds)
+                if self.playerSelectedThreeCards {
+                    print("Player selected three cards")
+                    seconds = randomTime[randomTime.count.arc4random]
+                    self.playerSelectedThreeCards = false
+                }
+                if seconds == 0 {
+                    let openCardsOnTheField = self.openCards.filter {$0.isHidden == false && $0.backgroundColor != #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)}
+                    if !self.game.selectedCards.isEmpty {
+                        for index in self.game.indicesOfSelectedCards {
+                            openCardsOnTheField[index].layer.borderWidth = 0
+                        }
+                    }
+                    self.game.hint()
+                    if self.game.selectedCards.count == 3 {
+                        self.game.checkIfCardsAreSets()
+                        if self.game.matchedCards.contains(self.game.selectedCards[0]) {
+                            if self.game.deck.isEmpty {
+                                for index in self.game.indicesOfSelectedCards {
+                                    openCardsOnTheField[index].backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+                                    openCardsOnTheField[index].setAttributedTitle(nil, for: .normal)
+                                }
+                            }
+                        }
+                        self.game.replaceRemovedCardsOnTheField()
+                        self.game.resetSelectedCards()
+                        self.assignCardToButton()
+                        self.updateLabels()
+                    }
+                    print("Play against computer")
+                    seconds = randomTime[randomTime.count.arc4random]
+                }
+            } else {
+                timer.invalidate()
+                print("Timer deactivated")
+            }
         }
     }
     

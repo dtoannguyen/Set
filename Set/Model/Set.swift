@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct Set {
+class Set {
     
     private(set) var deck = [Card]()
     private(set) var cardsOnTheField = [Card]()
@@ -17,6 +17,7 @@ struct Set {
     private(set) var indicesOfSelectedCards = [Int]()
     private(set) var score = 0
     private(set) var matches = 0
+    var computerModusIsOn = false
     
     private var cardsAreSets: (Card, Card, Card) -> Bool = {
         return ((($0.color == $1.color && $0.color == $2.color) || ($0.color != $1.color && $0.color != $2.color && $1.color != $2.color)) &&
@@ -39,7 +40,15 @@ struct Set {
         }
     }
     
-    mutating func drawCardsFromDeck(amountOfCards: Int) {
+    func drawCardsFromDeck(amountOfCards: Int) {
+        if amountOfCards == 3 {
+            hint()
+            if !selectedCards.isEmpty {
+                score -= 5
+                print("score reduction")
+                resetSelectedCards()
+            }
+        }
         for _ in 1...amountOfCards {
             let randomCard = deck.remove(at: deck.count.arc4random)
             cardsOnTheField.append(randomCard)
@@ -47,7 +56,7 @@ struct Set {
     }
     
     // MARK: - Select Card
-    mutating func selectCard(at index: Int) {
+    func selectCard(at index: Int) {
         if selectedCards.contains(cardsOnTheField[index]) {
             print("selectedCards contains \(cardsOnTheField[index])")
             let indexOfSelectedCard = selectedCards.index(of: cardsOnTheField[index])
@@ -62,7 +71,7 @@ struct Set {
     }
     
     // MARK: - Check if selected cards form a set or not
-    mutating func checkIfCardsAreSets() {
+    func checkIfCardsAreSets() {
         if selectedCards.count < 3 {
             print("There are not enough cards selected")
         }
@@ -84,7 +93,7 @@ struct Set {
     }
 
     // MARK: - Replace Removed Cards
-    mutating func replaceRemovedCardsOnTheField() {
+    func replaceRemovedCardsOnTheField() {
         if matchedCards.contains(selectedCards[1]) { // Any card of that array would be fine
             print("selectedCard is contained in matchedCards")
             let sortedIndicesOfSelectedCards = indicesOfSelectedCards.sorted()
@@ -104,13 +113,13 @@ struct Set {
     }
     
     // MARK: - Reset selectedCards and indicesOfSelecteCards
-    mutating func resetSelectedCards() {
+    func resetSelectedCards() {
         selectedCards.removeAll()
         indicesOfSelectedCards.removeAll()
     }
     
     // MARK: - Hint / Solution
-    mutating func hint() {
+    func hint() {
         resetSelectedCards()
         var arrayToRemoveFrom = cardsOnTheField.map({cardsOnTheField.index(of: $0)!})
         arrayToRemoveFrom.removeLast(2)

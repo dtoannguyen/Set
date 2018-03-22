@@ -250,7 +250,7 @@
                                 <rect key="frame" x="16" y="612" width="343" height="35"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7e-Vo-J1g">
-                                        <rect key="frame" x="0.0" y="0.0" width="167.5" height="35"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="109" height="35"/>
                                         <color key="backgroundColor" red="0.97647058823529409" green="0.97254901960784312" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <state key="normal" title="Hint">
@@ -260,11 +260,22 @@
                                             <action selector="hintButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="GKX-gf-mJT"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qXh-YC-cIi">
+                                        <rect key="frame" x="117" y="0.0" width="109" height="35"/>
+                                        <color key="backgroundColor" red="0.97647058819999999" green="0.97254901959999995" blue="0.92156862750000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <state key="normal" title="Computer">
+                                            <color key="titleColor" red="0.08235294118" green="0.32156862749999998" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="playAgainstComputerButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="fPu-ym-akm"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gsM-e7-bvf">
-                                        <rect key="frame" x="175.5" y="0.0" width="167.5" height="35"/>
+                                        <rect key="frame" x="234" y="0.0" width="109" height="35"/>
                                         <color key="backgroundColor" red="0.97647058823529409" green="0.97254901960784312" blue="0.92156862745098034" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <state key="normal" title="Deal 3 More Cards">
+                                        <state key="normal" title="More Cards">
                                             <color key="titleColor" red="0.08235294118" green="0.32156862749999998" blue="0.38823529410000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
@@ -322,6 +333,7 @@
                         <outlet property="cardsInDeckLabel" destination="Od8-8P-1HD" id="2Le-5w-oSo"/>
                         <outlet property="dealMoreCardsButton" destination="gsM-e7-bvf" id="oT0-QM-Iw0"/>
                         <outlet property="hintButton" destination="F7e-Vo-J1g" id="Igs-gM-s34"/>
+                        <outlet property="playAgainstComputerButton" destination="qXh-YC-cIi" id="Irl-Xc-Ugj"/>
                         <outlet property="scoreLabel" destination="J1z-f4-AlZ" id="0aJ-67-aS6"/>
                         <outletCollection property="openCards" destination="oZj-yR-lgb" collectionClass="NSMutableArray" id="53R-Ga-lcC"/>
                         <outletCollection property="openCards" destination="obe-8h-VkQ" collectionClass="NSMutableArray" id="np0-fB-ut7"/>
