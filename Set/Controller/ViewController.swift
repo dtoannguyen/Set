@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     private var game = Set()
     private var playerSelectedThreeCards = false
     
+    @IBOutlet private weak var computerState: UILabel!
     @IBOutlet private weak var cardsInDeckLabel: UILabel!
     @IBOutlet private weak var scoreLabel: UILabel!
     
@@ -26,6 +27,7 @@ class ViewController: UIViewController {
         dealMoreCardsButton.layer.cornerRadius = 8.0
         hintButton.layer.cornerRadius = 8.0
         playAgainstComputerButton.layer.cornerRadius = 8.0
+        computerState.text = ""
         gameSetup()
     }
     
@@ -152,6 +154,7 @@ class ViewController: UIViewController {
             }
             game.resetSelectedCards()
         }
+        updateLabels()
     }
     
     @IBAction func playAgainstComputerButtonPressed(_ sender: UIButton) {
@@ -159,8 +162,14 @@ class ViewController: UIViewController {
         print("computerModusIsOn: \(game.computerModusIsOn)")
         let randomTime = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
         var seconds = randomTime[randomTime.count.arc4random]
+        var startSeconds = seconds
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
             if self.game.computerModusIsOn {
+                if seconds == 3 {
+                    self.computerState.text = "😁"
+                } else if seconds == (startSeconds - 1) {
+                    self.computerState.text = "🤔"
+                }
                 seconds -= 1
                 print(seconds)
                 if self.playerSelectedThreeCards {
@@ -169,6 +178,8 @@ class ViewController: UIViewController {
                     self.playerSelectedThreeCards = false
                 }
                 if seconds == 0 {
+                    self.game.computerPickedFirst = true
+                    self.computerState.text = "😋"
                     let openCardsOnTheField = self.openCards.filter {$0.isHidden == false && $0.backgroundColor != #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)}
                     if !self.game.selectedCards.isEmpty {
                         for index in self.game.indicesOfSelectedCards {
@@ -192,7 +203,9 @@ class ViewController: UIViewController {
                         self.updateLabels()
                     }
                     print("Play against computer")
+                    self.game.computerPickedFirst = false
                     seconds = randomTime[randomTime.count.arc4random]
+                    startSeconds = seconds
                 }
             } else {
                 timer.invalidate()

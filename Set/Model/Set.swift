@@ -18,6 +18,7 @@ class Set {
     private(set) var score = 0
     private(set) var matches = 0
     var computerModusIsOn = false
+    var computerPickedFirst = false
     
     private var cardsAreSets: (Card, Card, Card) -> Bool = {
         return ((($0.color == $1.color && $0.color == $2.color) || ($0.color != $1.color && $0.color != $2.color && $1.color != $2.color)) &&
@@ -78,7 +79,13 @@ class Set {
         if selectedCards.count == 3 {
             if cardsAreSets(selectedCards[0], selectedCards[1], selectedCards[2]) {
                 print("It's a match!")
-                score += 3
+                if computerPickedFirst {
+//                    score -= 5
+                    print("Computer Picked First: Score -5")
+                } else {
+                    score += 3
+                    print("You Picked First: Score +3")
+                }
                 for card in selectedCards {
                     matchedCards.append(card)
                 }
@@ -87,7 +94,12 @@ class Set {
                 }
             } else {
                 print("Cards do not match!")
-                score -= 5
+                if computerPickedFirst {
+                    print("Cards selected by computer are no set")
+                } else {
+                    print("You selected cards that are no set")
+                    score -= 5
+                }
             }
         }
     }
@@ -120,6 +132,7 @@ class Set {
     
     // MARK: - Hint / Solution
     func hint() {
+        score -= 5
         resetSelectedCards()
         var arrayToRemoveFrom = cardsOnTheField.map({cardsOnTheField.index(of: $0)!})
         arrayToRemoveFrom.removeLast(2)
