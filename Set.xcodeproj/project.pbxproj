@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E802CDF72068119F00C169A7 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = E802CDF62068119E00C169A7 /* Grid.swift */; };
+		E802CDF92069825800C169A7 /* CardSubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E802CDF82069825800C169A7 /* CardSubView.swift */; };
 		E87ACF82202E57B400781E59 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87ACF81202E57B400781E59 /* AppDelegate.swift */; };
 		E87ACF84202E57B400781E59 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87ACF83202E57B400781E59 /* ViewController.swift */; };
 		E87ACF87202E57B400781E59 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E87ACF85202E57B400781E59 /* Main.storyboard */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E802CDF62068119E00C169A7 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		E802CDF82069825800C169A7 /* CardSubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSubView.swift; sourceTree = "<group>"; };
 		E87ACF7E202E57B400781E59 /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E87ACF81202E57B400781E59 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E87ACF83202E57B400781E59 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -88,7 +92,9 @@
 		E87ACF95202E582C00781E59 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				E802CDF62068119E00C169A7 /* Grid.swift */,
 				E87ACF83202E57B400781E59 /* ViewController.swift */,
+				E802CDF82069825800C169A7 /* CardSubView.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -175,8 +181,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				E87ACF84202E57B400781E59 /* ViewController.swift in Sources */,
+				E802CDF92069825800C169A7 /* CardSubView.swift in Sources */,
 				E87ACF82202E57B400781E59 /* AppDelegate.swift in Sources */,
 				E87ACF98202E584F00781E59 /* Set.swift in Sources */,
+				E802CDF72068119F00C169A7 /* Grid.swift in Sources */,
 				E87ACF9A202E586F00781E59 /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

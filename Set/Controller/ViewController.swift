@@ -12,6 +12,10 @@ class ViewController: UIViewController {
 
     private var game = Set()
     private var playerSelectedThreeCards = false
+    private var openCards = [UIButton]()
+    private lazy var grid = Grid.init(layout: .aspectRatio(0.8), frame: cardView.bounds)
+    
+    @IBOutlet weak var cardView: UIView!
     
     @IBOutlet private weak var computerState: UILabel!
     @IBOutlet private weak var cardsInDeckLabel: UILabel!
@@ -20,7 +24,6 @@ class ViewController: UIViewController {
     @IBOutlet private weak var hintButton: UIButton!
     @IBOutlet weak var playAgainstComputerButton: UIButton!
     @IBOutlet private weak var dealMoreCardsButton: UIButton!
-    @IBOutlet private var openCards: [UIButton]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,20 +32,53 @@ class ViewController: UIViewController {
         playAgainstComputerButton.layer.cornerRadius = 8.0
         computerState.text = ""
         gameSetup()
+        setupCardView()
+    }
+    
+    // Gets triggered when change in layout of subviews is detected
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        setupCardView()
+    }
+    
+    private func setupCardView() {
+        grid.frame = cardView.bounds
+        grid.cellCount = game.cardsOnTheField.count
+        
+        for subview in cardView.subviews {
+            subview.removeFromSuperview()
+        }
+        
+        for index in 0..<grid.cellCount {
+            if let cellFrame = grid[index] {
+                let cardOnTheField = game.cardsOnTheField[index]
+                let card = CardSubView.init(frame: cellFrame.insetBy(dx: 1, dy: 1))
+                card.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
+                let dict: [Card.Numbers : Int] = [.one : 1, .two : 2, .three : 3]
+                let symboldict: [Card.Symbols : String] = [.triangle : "diamond", .square : "squiggle", .circle : "circle"]
+                card.symbol = symboldict[cardOnTheField.symbol]
+                card.number = dict[cardOnTheField.number]
+                cardView.addSubview(card)
+            }
+        }
     }
     
     private func gameSetup() {
+//        for _ in 1...12 {
+//            let button = UIButton()
+//            openCards.append(button)
+//        }
         game.drawCardsFromDeck(amountOfCards: 12)
         updateLabels()
-        for buttonIndex in openCards.indices {
-            openCards[buttonIndex].backgroundColor = #colorLiteral(red: 0.9764705882, green: 0.9725490196, blue: 0.9215686275, alpha: 1)
-            if buttonIndex < 12 {
-                openCards[buttonIndex].isHidden = false
-                openCards[buttonIndex].layer.borderWidth = 0.0
-            } else {
-                openCards[buttonIndex].isHidden = true
-            }
-        }
+//        for buttonIndex in openCards.indices {
+//            openCards[buttonIndex].backgroundColor = #colorLiteral(red: 0.9764705882, green: 0.9725490196, blue: 0.9215686275, alpha: 1)
+//            if buttonIndex < 12 {
+//                openCards[buttonIndex].isHidden = false
+//                openCards[buttonIndex].layer.borderWidth = 0.0
+//            } else {
+//                openCards[buttonIndex].isHidden = true
+//            }
+//        }
         assignCardToButton()
     }
     
@@ -119,14 +155,16 @@ class ViewController: UIViewController {
     }
 
     @IBAction private func dealThreeMoreCardsButtonPressed(_ sender: Any) {
-        if game.cardsOnTheField.count < 24 && !game.deck.isEmpty {
-            let indicesOfHiddenCardsOnTheField = openCards.indices.filter() {openCards[$0].isHidden == true}
-            for index in 0...2 {
-                openCards[indicesOfHiddenCardsOnTheField[index]].isHidden = false
-            }
+        if !game.deck.isEmpty {
+//            let indicesOfHiddenCardsOnTheField = openCards.indices.filter() {openCards[$0].isHidden == true}
+//            for index in 0...2 {
+//                openCards[indicesOfHiddenCardsOnTheField[index]].isHidden = false
+//            }
             game.drawCardsFromDeck(amountOfCards: 3)
+            setupCardView()
             assignCardToButton()
             updateLabels()
+            cardView.setNeedsDisplay()
         }
     }
     
