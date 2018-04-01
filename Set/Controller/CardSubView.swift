@@ -83,7 +83,6 @@ class CardSubView: UIView {
         ovalPath.addArc(withCenter: CGPoint(x: rect.midX - (3/10 * rect.width), y: rect.midY), radius: (1/5 * rect.width), startAngle: (0.5 * CGFloat.pi), endAngle: (1.5 * CGFloat.pi), clockwise: true)
         ovalPath.addArc(withCenter: CGPoint(x: rect.midX + (3/10 * rect.width), y: rect.midY), radius: (1/5 * rect.width), startAngle: (1.5 * CGFloat.pi), endAngle: 0.5 * CGFloat.pi, clockwise: true)
         ovalPath.close()
-        UIColor.red.setStroke()
         ovalPath.lineWidth = 2
         ovalPath.stroke()
     }
@@ -96,12 +95,13 @@ class CardSubView: UIView {
         diamondPath.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
         diamondPath.close()
         diamondPath.lineWidth = 2
-        UIColor.red.setStroke()
         diamondPath.stroke()
     }
     
     private func drawSquiggle(rect: CGRect) {
-        
+        let squigglePath = UIBezierPath()
+        squigglePath.addQuadCurve(to: <#T##CGPoint#>, controlPoint: <#T##CGPoint#>)
+        squigglePath.addArc(withCenter: <#T##CGPoint#>, radius: <#T##CGFloat#>, startAngle: <#T##CGFloat#>, endAngle: <#T##CGFloat#>, clockwise: <#T##Bool#>)
     }
 }
 
