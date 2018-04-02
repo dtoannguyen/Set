@@ -80,8 +80,9 @@ class CardSubView: UIView {
     
     private func drawOval(rect: CGRect) {
         let ovalPath = UIBezierPath()
-        ovalPath.addArc(withCenter: CGPoint(x: rect.midX - (3/10 * rect.width), y: rect.midY), radius: (1/5 * rect.width), startAngle: (0.5 * CGFloat.pi), endAngle: (1.5 * CGFloat.pi), clockwise: true)
-        ovalPath.addArc(withCenter: CGPoint(x: rect.midX + (3/10 * rect.width), y: rect.midY), radius: (1/5 * rect.width), startAngle: (1.5 * CGFloat.pi), endAngle: 0.5 * CGFloat.pi, clockwise: true)
+        let radius = SizeRatio.radiusRatio * rect.width
+        ovalPath.addArc(withCenter: CGPoint(x: rect.minX + radius, y: rect.midY), radius: radius, startAngle: (0.5 * CGFloat.pi), endAngle: (1.5 * CGFloat.pi), clockwise: true)
+        ovalPath.addArc(withCenter: CGPoint(x: rect.maxX - radius, y: rect.midY), radius: radius, startAngle: (1.5 * CGFloat.pi), endAngle: 2.5 * CGFloat.pi, clockwise: true)
         ovalPath.close()
         ovalPath.lineWidth = 2
         ovalPath.stroke()
@@ -100,8 +101,19 @@ class CardSubView: UIView {
     
     private func drawSquiggle(rect: CGRect) {
         let squigglePath = UIBezierPath()
-        squigglePath.addQuadCurve(to: <#T##CGPoint#>, controlPoint: <#T##CGPoint#>)
-        squigglePath.addArc(withCenter: <#T##CGPoint#>, radius: <#T##CGFloat#>, startAngle: <#T##CGFloat#>, endAngle: <#T##CGFloat#>, clockwise: <#T##Bool#>)
+        let dxInset = SizeRatio.dxInsetRatio * rect.width
+        let dyInset = SizeRatio.dyInsetRatio * rect.height
+        squigglePath.move(to: CGPoint(x: rect.minX + dxInset, y: rect.maxY))
+        squigglePath.addCurve(to: CGPoint(x: rect.minX + (dxInset * 2), y: rect.minY + dyInset), controlPoint1: CGPoint(x: rect.minX, y: rect.maxY), controlPoint2: CGPoint(x: rect.minX, y: rect.midY - (dyInset * 2)))
+
+        squigglePath.addCurve(to: CGPoint(x: rect.maxX - dxInset, y: rect.minY + dyInset), controlPoint1: CGPoint(x: rect.midX - dxInset, y: rect.minY), controlPoint2: CGPoint(x: rect.midX + (dxInset/2), y: rect.midY))
+        squigglePath.addCurve(to: CGPoint(x: rect.maxX - (dxInset * 1.5), y: rect.maxY - (dyInset / 2)), controlPoint1: CGPoint(x: rect.maxX, y: rect.minY), controlPoint2: CGPoint(x: rect.maxX, y: rect.maxY - dyInset))
+        squigglePath.addCurve(to: CGPoint(x: rect.minX + dxInset, y: rect.maxY), controlPoint1: CGPoint(x: rect.midX + dxInset, y: rect.maxY), controlPoint2: CGPoint(x: rect.midX - (dxInset/2), y: rect.midY))
+//        squigglePath.addQuadCurve(to: CGPoint(x: rect.minX + (dxInset * 2), y: rect.minY + dyInset), controlPoint: CGPoint(x: rect.minX, y: rect.maxY))
+//        squigglePath.addQuadCurve(to: CGPoint(x: rect.maxX - (dxInset * 2), y: rect.minY + (dyInset / 3)), controlPoint: CGPoint(x: rect.maxX - (dxInset * 3), y: rect.midY - dyInset))
+//        squigglePath.addQuadCurve(to: CGPoint(x: rect.midX + dxInset, y: rect.maxY - dyInset), controlPoint: CGPoint(x: rect.maxX, y: rect.minY + dyInset))
+        squigglePath.lineWidth = 2
+        squigglePath.stroke()
     }
 }
 
@@ -109,6 +121,7 @@ extension CardSubView {
     private struct SizeRatio {
         static let dxInsetRatio: CGFloat = (1/8)
         static let dyInsetRatio: CGFloat = (1/7)
+        static let radiusRatio: CGFloat = (1/5)
         static let widthRatio: CGFloat = (1 - (2 * SizeRatio.dxInsetRatio))
         static let heightRatio: CGFloat = (2 * SizeRatio.dyInsetRatio)
         static let dyInsetRatioBetweenRects: CGFloat = (1/40)
