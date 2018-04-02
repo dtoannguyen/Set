@@ -103,15 +103,12 @@ class CardSubView: UIView {
         let squigglePath = UIBezierPath()
         let dxInset = SizeRatio.dxInsetRatio * rect.width
         let dyInset = SizeRatio.dyInsetRatio * rect.height
-        squigglePath.move(to: CGPoint(x: rect.minX + dxInset, y: rect.maxY))
-        squigglePath.addCurve(to: CGPoint(x: rect.minX + (dxInset * 2), y: rect.minY + dyInset), controlPoint1: CGPoint(x: rect.minX, y: rect.maxY), controlPoint2: CGPoint(x: rect.minX, y: rect.midY - (dyInset * 2)))
-
-        squigglePath.addCurve(to: CGPoint(x: rect.maxX - dxInset, y: rect.minY + dyInset), controlPoint1: CGPoint(x: rect.midX - dxInset, y: rect.minY), controlPoint2: CGPoint(x: rect.midX + (dxInset/2), y: rect.midY))
-        squigglePath.addCurve(to: CGPoint(x: rect.maxX - (dxInset * 1.5), y: rect.maxY - (dyInset / 2)), controlPoint1: CGPoint(x: rect.maxX, y: rect.minY), controlPoint2: CGPoint(x: rect.maxX, y: rect.maxY - dyInset))
-        squigglePath.addCurve(to: CGPoint(x: rect.minX + dxInset, y: rect.maxY), controlPoint1: CGPoint(x: rect.midX + dxInset, y: rect.maxY), controlPoint2: CGPoint(x: rect.midX - (dxInset/2), y: rect.midY))
-//        squigglePath.addQuadCurve(to: CGPoint(x: rect.minX + (dxInset * 2), y: rect.minY + dyInset), controlPoint: CGPoint(x: rect.minX, y: rect.maxY))
-//        squigglePath.addQuadCurve(to: CGPoint(x: rect.maxX - (dxInset * 2), y: rect.minY + (dyInset / 3)), controlPoint: CGPoint(x: rect.maxX - (dxInset * 3), y: rect.midY - dyInset))
-//        squigglePath.addQuadCurve(to: CGPoint(x: rect.midX + dxInset, y: rect.maxY - dyInset), controlPoint: CGPoint(x: rect.maxX, y: rect.minY + dyInset))
+        squigglePath.move(to: CGPoint(x: rect.minX + (dxInset * 1.5), y: rect.maxY - (dyInset / 2.75)))
+        squigglePath.addCurve(to: CGPoint(x: rect.minX + (dxInset * 2), y: rect.minY + (dyInset*1.3)), controlPoint1: CGPoint(x: rect.minX + dxInset, y: rect.maxY), controlPoint2: CGPoint(x: rect.minX, y: rect.midY))
+        squigglePath.addCurve(to: CGPoint(x: rect.maxX - (dxInset*1.5), y: rect.minY + dyInset), controlPoint1: CGPoint(x: rect.midX + (dxInset / 2), y: rect.minY), controlPoint2: CGPoint(x: rect.midX + (dxInset/2), y: rect.midY))
+        squigglePath.addCurve(to: CGPoint(x: rect.maxX - (dxInset * 2), y: rect.maxY - (dyInset / 2)), controlPoint1: CGPoint(x: rect.maxX, y: rect.minY), controlPoint2: CGPoint(x: rect.maxX, y: rect.maxY - dyInset))
+        squigglePath.addCurve(to: CGPoint(x: rect.minX + (dxInset * 2.4), y: rect.maxY - (dyInset / 1.5)), controlPoint1: CGPoint(x: rect.midX, y: rect.maxY), controlPoint2: CGPoint(x: rect.midX, y: rect.midY + (dyInset/1.5)))
+        squigglePath.addQuadCurve(to: CGPoint(x: rect.minX + (dxInset * 1.5), y: rect.maxY - (dyInset / 2.75)), controlPoint: CGPoint(x: rect.minX + (dxInset * 1.6), y: rect.maxY))
         squigglePath.lineWidth = 2
         squigglePath.stroke()
     }
