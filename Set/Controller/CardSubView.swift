@@ -55,51 +55,68 @@ class CardSubView: UIView {
             addSubview(symbolViewThree)
             drawRects = [symbolRectOne, symbolRectTwo, symbolRectThree]
         }
-//        print(subviews.count)
-//        for subview in subviews {
-//            subview.backgroundColor = UIColor.green
-//            print("subview.backgroundcolor is set to green")
-//        }
         for drawRect in drawRects {
             drawSymbol(rect: drawRect)
         }
     }
     
     private func drawSymbol(rect: CGRect) {
+        var path = UIBezierPath()
         if symbol == "circle" {
             print("Drawing circles")
-            drawOval(rect: rect)
+            path = getOvalPath(rect: rect)
         } else if symbol == "diamond" {
             print("Drawing diamonds")
-            drawDiamond(rect: rect)
+            path = getDiamondPath(rect: rect)
         } else if symbol == "squiggle" {
             print("Drawing squiggles")
-            drawSquiggle(rect: rect)
+            path = getSquigglePath(rect: rect)
         }
+        color?.setStroke()
+        if shade == "solid" {
+            color?.setFill()
+            path.fill()
+        } else if shade == "striped" {
+//            path.addClip()
+            let stripeOffset = SizeRatio.stipeOffsetRatio * rect.width
+            var xValue = rect.minX
+            let amountOfStripes = Int(Double(rect.width / stripeOffset) / 1.8)
+            path.move(to: CGPoint(x: xValue, y: rect.maxY))
+            for _ in 1...amountOfStripes {
+                xValue += stripeOffset
+                path.addLine(to: CGPoint(x: xValue, y: rect.minY))
+                xValue += stripeOffset
+                path.addLine(to: CGPoint(x: xValue, y: rect.minY))
+                xValue -= stripeOffset
+                path.addLine(to: CGPoint(x: xValue, y: rect.maxY))
+                xValue += stripeOffset
+                path.addLine(to: CGPoint(x: xValue, y: rect.maxY))
+            }
+        }
+        path.lineWidth = 4.0
+        path.stroke()
     }
     
-    private func drawOval(rect: CGRect) {
+    private func getOvalPath(rect: CGRect) -> UIBezierPath {
         let ovalPath = UIBezierPath()
         let radius = SizeRatio.radiusRatio * rect.width
         ovalPath.addArc(withCenter: CGPoint(x: rect.minX + radius, y: rect.midY), radius: radius, startAngle: (0.5 * CGFloat.pi), endAngle: (1.5 * CGFloat.pi), clockwise: true)
         ovalPath.addArc(withCenter: CGPoint(x: rect.maxX - radius, y: rect.midY), radius: radius, startAngle: (1.5 * CGFloat.pi), endAngle: 2.5 * CGFloat.pi, clockwise: true)
         ovalPath.close()
-        ovalPath.lineWidth = 2
-        ovalPath.stroke()
+        return ovalPath
     }
     
-    private func drawDiamond(rect: CGRect) {
+    private func getDiamondPath(rect: CGRect) -> UIBezierPath {
         let diamondPath = UIBezierPath()
         diamondPath.move(to: CGPoint(x: rect.minX, y: rect.midY))
         diamondPath.addLine(to: CGPoint(x: rect.midX, y: rect.minY))
         diamondPath.addLine(to: CGPoint(x: rect.maxX, y: rect.midY))
         diamondPath.addLine(to: CGPoint(x: rect.midX, y: rect.maxY))
         diamondPath.close()
-        diamondPath.lineWidth = 2
-        diamondPath.stroke()
+        return diamondPath
     }
     
-    private func drawSquiggle(rect: CGRect) {
+    private func getSquigglePath(rect: CGRect) -> UIBezierPath {
         let squigglePath = UIBezierPath()
         let dxInset = SizeRatio.dxInsetRatio * rect.width
         let dyInset = SizeRatio.dyInsetRatio * rect.height
@@ -109,8 +126,20 @@ class CardSubView: UIView {
         squigglePath.addCurve(to: CGPoint(x: rect.maxX - (dxInset * 2), y: rect.maxY - (dyInset / 2)), controlPoint1: CGPoint(x: rect.maxX, y: rect.minY), controlPoint2: CGPoint(x: rect.maxX, y: rect.maxY - dyInset))
         squigglePath.addCurve(to: CGPoint(x: rect.minX + (dxInset * 2.4), y: rect.maxY - (dyInset / 1.5)), controlPoint1: CGPoint(x: rect.midX, y: rect.maxY), controlPoint2: CGPoint(x: rect.midX, y: rect.midY + (dyInset/1.5)))
         squigglePath.addQuadCurve(to: CGPoint(x: rect.minX + (dxInset * 1.5), y: rect.maxY - (dyInset / 2.75)), controlPoint: CGPoint(x: rect.minX + (dxInset * 1.6), y: rect.maxY))
-        squigglePath.lineWidth = 2
-        squigglePath.stroke()
+        return squigglePath
+    }
+    
+    private func drawStripes(rect: CGRect) -> UIBezierPath {
+        let path = UIBezierPath()
+        let stripeOffset = SizeRatio.stipeOffsetRatio * rect.width
+        var xValue = rect.minX
+        let amountOfStripes = Int(rect.width / stripeOffset)
+        for _ in 1...amountOfStripes {
+            path.move(to: CGPoint(x: xValue, y: rect.maxY))
+            xValue += stripeOffset
+            path.addLine(to: CGPoint(x: xValue, y: rect.maxY))
+        }
+        return path
     }
 }
 
@@ -122,6 +151,7 @@ extension CardSubView {
         static let widthRatio: CGFloat = (1 - (2 * SizeRatio.dxInsetRatio))
         static let heightRatio: CGFloat = (2 * SizeRatio.dyInsetRatio)
         static let dyInsetRatioBetweenRects: CGFloat = (1/40)
+        static let stipeOffsetRatio: CGFloat = (1/15)
     }
     
 }

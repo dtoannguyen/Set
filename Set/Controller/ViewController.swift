@@ -30,7 +30,6 @@ class ViewController: UIViewController {
         dealMoreCardsButton.layer.cornerRadius = 8.0
         hintButton.layer.cornerRadius = 8.0
         playAgainstComputerButton.layer.cornerRadius = 8.0
-        computerState.text = ""
         gameSetup()
         setupCardView()
     }
@@ -54,10 +53,14 @@ class ViewController: UIViewController {
                 let cardOnTheField = game.cardsOnTheField[index]
                 let card = CardSubView.init(frame: cellFrame.insetBy(dx: 1, dy: 1))
                 card.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
-                let dict: [Card.Numbers : Int] = [.one : 1, .two : 2, .three : 3]
-                let symboldict: [Card.Symbols : String] = [.triangle : "diamond", .square : "squiggle", .circle : "circle"]
-                card.symbol = symboldict[cardOnTheField.symbol]
-                card.number = dict[cardOnTheField.number]
+                let colorDict: [Card.Colors : UIColor] = [.red : UIColor.red, .green : UIColor.green, .purple : UIColor.purple]
+                let shadeDict: [Card.Shades : String] = [Card.Shades.open : "open", Card.Shades.solid : "solid", Card.Shades.striped : "striped"]
+                let numberDict: [Card.Numbers : Int] = [.one : 1, .two : 2, .three : 3]
+                let symbolDict: [Card.Symbols : String] = [.triangle : "diamond", .square : "squiggle", .circle : "circle"]
+                card.color = colorDict[cardOnTheField.color]
+                card.shade = shadeDict[cardOnTheField.shading]
+                card.symbol = symbolDict[cardOnTheField.symbol]
+                card.number = numberDict[cardOnTheField.number]
                 cardView.addSubview(card)
             }
         }
@@ -80,6 +83,7 @@ class ViewController: UIViewController {
 //            }
 //        }
         assignCardToButton()
+        computerState.text = ""
     }
     
     private func assignCardToButton() {
