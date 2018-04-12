@@ -77,21 +77,13 @@ class CardSubView: UIView {
             color?.setFill()
             path.fill()
         } else if shade == "striped" {
-//            path.addClip()
-            let stripeOffset = SizeRatio.stipeOffsetRatio * rect.width
-            var xValue = rect.minX
-            let amountOfStripes = Int(Double(rect.width / stripeOffset) / 1.8)
-            path.move(to: CGPoint(x: xValue, y: rect.maxY))
-            for _ in 1...amountOfStripes {
-                xValue += stripeOffset
-                path.addLine(to: CGPoint(x: xValue, y: rect.minY))
-                xValue += stripeOffset
-                path.addLine(to: CGPoint(x: xValue, y: rect.minY))
-                xValue -= stripeOffset
-                path.addLine(to: CGPoint(x: xValue, y: rect.maxY))
-                xValue += stripeOffset
-                path.addLine(to: CGPoint(x: xValue, y: rect.maxY))
-            }
+            let context = UIGraphicsGetCurrentContext()
+            context?.saveGState()
+            path.addClip()
+            let stripes = drawStripes(rect: rect)
+            stripes.lineWidth = 2.0
+            stripes.stroke()
+            context?.restoreGState()
         }
         path.lineWidth = 4.0
         path.stroke()
@@ -130,16 +122,22 @@ class CardSubView: UIView {
     }
     
     private func drawStripes(rect: CGRect) -> UIBezierPath {
-        let path = UIBezierPath()
+        let stripePath = UIBezierPath()
         let stripeOffset = SizeRatio.stipeOffsetRatio * rect.width
         var xValue = rect.minX
-        let amountOfStripes = Int(rect.width / stripeOffset)
+        let amountOfStripes = Int(Double(rect.width / stripeOffset) / 1.8)
+        stripePath.move(to: CGPoint(x: xValue, y: rect.maxY))
         for _ in 1...amountOfStripes {
-            path.move(to: CGPoint(x: xValue, y: rect.maxY))
             xValue += stripeOffset
-            path.addLine(to: CGPoint(x: xValue, y: rect.maxY))
+            stripePath.addLine(to: CGPoint(x: xValue, y: rect.minY))
+            xValue += stripeOffset
+            stripePath.addLine(to: CGPoint(x: xValue, y: rect.minY))
+            xValue -= stripeOffset
+            stripePath.addLine(to: CGPoint(x: xValue, y: rect.maxY))
+            xValue += stripeOffset
+            stripePath.addLine(to: CGPoint(x: xValue, y: rect.maxY))
         }
-        return path
+        return stripePath
     }
 }
 
