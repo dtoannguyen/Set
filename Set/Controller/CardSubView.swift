@@ -20,6 +20,9 @@ class CardSubView: UIView {
         UIColor.white.setFill()
         roundedRect.fill()
         drawSubviews()
+        for subview in subviews {
+            subview.isUserInteractionEnabled = false
+        }
     }
     
     private func drawSubviews() {
@@ -63,13 +66,13 @@ class CardSubView: UIView {
     private func drawSymbol(rect: CGRect) {
         var path = UIBezierPath()
         if symbol == "circle" {
-            print("Drawing circles")
+//            print("Drawing circles")
             path = getOvalPath(rect: rect)
         } else if symbol == "diamond" {
-            print("Drawing diamonds")
+//            print("Drawing diamonds")
             path = getDiamondPath(rect: rect)
         } else if symbol == "squiggle" {
-            print("Drawing squiggles")
+//            print("Drawing squiggles")
             path = getSquigglePath(rect: rect)
         }
         color?.setStroke()
@@ -85,7 +88,7 @@ class CardSubView: UIView {
             stripes.stroke()
             context?.restoreGState()
         }
-        path.lineWidth = 4.0
+        path.lineWidth = 2.0
         path.stroke()
     }
     
@@ -123,7 +126,7 @@ class CardSubView: UIView {
     
     private func drawStripes(rect: CGRect) -> UIBezierPath {
         let stripePath = UIBezierPath()
-        let stripeOffset = SizeRatio.stipeOffsetRatio * rect.width
+        let stripeOffset = SizeRatio.stipeOffsetRatio * rect.width * 1.5
         var xValue = rect.minX
         let amountOfStripes = Int(Double(rect.width / stripeOffset) / 1.8)
         stripePath.move(to: CGPoint(x: xValue, y: rect.maxY))

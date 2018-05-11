@@ -77,10 +77,10 @@ class Set {
             print("There are not enough cards selected")
         }
         if selectedCards.count == 3 {
-            if cardsAreSets(selectedCards[0], selectedCards[1], selectedCards[2]) {
+//            if cardsAreSets(selectedCards[0], selectedCards[1], selectedCards[2]) {
                 print("It's a match!")
                 if computerPickedFirst {
-//                    score -= 5
+                    score -= 5
                     print("Computer Picked First: Score -5")
                 } else {
                     score += 3
@@ -92,15 +92,15 @@ class Set {
                 if matchedCards.count == 81 {
                     print("All cards have been appended to matchedCards")
                 }
-            } else {
-                print("Cards do not match!")
-                if computerPickedFirst {
-                    print("Cards selected by computer are no set")
-                } else {
-                    print("You selected cards that are no set")
-                    score -= 5
-                }
-            }
+//            } else {
+//                print("Cards do not match!")
+//                if computerPickedFirst {
+//                    print("Cards selected by computer are no set")
+//                } else {
+//                    print("You selected cards that are no set")
+//                    score -= 5
+//                }
+//            }
         }
     }
 
@@ -172,13 +172,24 @@ class Set {
                     if index == (cardsOnTheField.count - 2) && secondIndex == (cardsOnTheField.count - 1) {
                         print("Currently there are no cards on the field that makes up a set")
                     } else {
-                        print("No matching cards for card with index \(randomIndex)/\(secondIndex)could be found")
+                        print("No matching cards for card with index \(randomIndex)/\(secondIndex) could be found")
                     }
                 }
             }
             selectedCards.remove(at: 0)
             indicesOfSelectedCards.remove(at: 0)
         }
+    }
+    
+    func reshuffleCardsOnTheField() {
+        var shuffledCardsOnTheField = [Card]()
+        for _ in 1...cardsOnTheField.count {
+            let randomIndex = cardsOnTheField.count.arc4random
+            let randomCard = cardsOnTheField[randomIndex]
+            shuffledCardsOnTheField.append(randomCard)
+            cardsOnTheField.remove(at: randomIndex)
+        }
+        cardsOnTheField = shuffledCardsOnTheField
     }
     
 }
