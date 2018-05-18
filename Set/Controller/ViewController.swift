@@ -142,70 +142,59 @@ class ViewController: UIViewController {
                 cardView.subviews[index].layer.borderWidth = 4
                 cardView.subviews[index].layer.cornerRadius = 8
                 cardView.subviews[index].layer.borderColor = UIColor.red.cgColor
+                print("cardView.subview[\(index)] changed borderColor.")
             }
             game.resetSelectedCards()
         } else {
             print("There are no sets on the field")
         }
-//        scoreLabel.text = "Score: \(self.game.score)"
+        scoreLabel.text = "Score: \(game.score)"
     }
     
-//    @IBAction func playAgainstComputerButtonPressed(_ sender: UIButton) {
-//        game.computerModusIsOn = game.computerModusIsOn == true ? false : true
-//        print("computerModusIsOn: \(game.computerModusIsOn)")
-//        let randomTime = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
-//        var seconds = randomTime[randomTime.count.arc4random]
-//        var startSeconds = seconds
-//        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
-//            if self.game.computerModusIsOn {
-//                if seconds == 3 {
-//                    self.computerState.text = "😁"
-//                } else if seconds == (startSeconds - 1) {
-//                    self.computerState.text = "🤔"
-//                }
-//                seconds -= 1
-//                print(seconds)
-//                if self.playerSelectedThreeCards {
-//                    print("Player selected three cards")
-//                    seconds = randomTime[randomTime.count.arc4random]
-//                    self.playerSelectedThreeCards = false
-//                }
-//                if seconds == 0 {
-//                    self.game.computerPickedFirst = true
-//                    self.computerState.text = "😋"
-//                    let openCardsOnTheField = self.openCards.filter {$0.isHidden == false && $0.backgroundColor != #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)}
-//                    if !self.game.selectedCards.isEmpty {
-//                        for index in self.game.indicesOfSelectedCards {
-//                            openCardsOnTheField[index].layer.borderWidth = 0
-//                        }
-//                    }
-//                    self.game.hint()
-//                    if self.game.selectedCards.count == 3 {
-//                        self.game.checkIfCardsAreSets()
-//                        if self.game.matchedCards.contains(self.game.selectedCards[0]) {
-//                            if self.game.deck.isEmpty {
-//                                for index in self.game.indicesOfSelectedCards {
-//                                    openCardsOnTheField[index].backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
-//                                    openCardsOnTheField[index].setAttributedTitle(nil, for: .normal)
-//                                }
-//                            }
-//                        }
-//                        self.game.replaceRemovedCardsOnTheField()
-//                        self.game.resetSelectedCards()
-////                        self.assignCardToButton()
-//                        self.updateLabels()
-//                    }
-//                    print("Play against computer")
-//                    self.game.computerPickedFirst = false
-//                    seconds = randomTime[randomTime.count.arc4random]
-//                    startSeconds = seconds
-//                }
-//            } else {
-//                timer.invalidate()
-//                print("Timer deactivated")
-//            }
-//        }
-//    }
+
+    @IBAction func playAgainstComputerButtonPressed(_ sender: UIButton) {
+        game.computerModusIsOn = game.computerModusIsOn == true ? false : true
+        print("computerModusIsOn: \(game.computerModusIsOn)")
+        let randomTime = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+        var seconds = randomTime[randomTime.count.arc4random]
+        var startSeconds = seconds
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
+            if self.game.computerModusIsOn {
+                if seconds == 3 {
+                    self.computerState.text = "😁"
+                } else if seconds == (startSeconds - 1) {
+                    self.computerState.text = "🤔"
+                }
+                seconds -= 1
+                print(seconds)
+                if self.playerSelectedThreeCards {
+                    print("Player selected three cards")
+                    seconds = randomTime[randomTime.count.arc4random]
+                    self.playerSelectedThreeCards = false
+                }
+                if seconds == 0 {
+                    self.game.computerPickedFirst = true
+                    self.computerState.text = "😋"
+                    self.game.hint()
+                    if self.game.selectedCards.count == 3 {
+                        self.game.checkIfCardsAreSets()
+                        self.game.replaceRemovedCardsOnTheField()
+                        self.game.resetSelectedCards()
+                        self.updateCardView()
+                        self.updateLabels()
+                    }
+                    print("Play against computer")
+                    self.game.computerPickedFirst = false
+                    seconds = randomTime[randomTime.count.arc4random]
+                    startSeconds = seconds
+                }
+            } else {
+                timer.invalidate()
+                print("Timer deactivated")
+                self.computerState.text = ""
+            }
+        }
+    }
     
     // MARK: - Gesture Handlers
     
