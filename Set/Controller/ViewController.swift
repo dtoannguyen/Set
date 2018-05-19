@@ -148,10 +148,12 @@ class ViewController: UIViewController {
         } else {
             print("There are no sets on the field")
         }
-        scoreLabel.text = "Score: \(game.score)"
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(250)) {
+            self.scoreLabel.text = "Score: \(self.game.score)"
+        }
+        
     }
     
-
     @IBAction func playAgainstComputerButtonPressed(_ sender: UIButton) {
         game.computerModusIsOn = game.computerModusIsOn == true ? false : true
         print("computerModusIsOn: \(game.computerModusIsOn)")
